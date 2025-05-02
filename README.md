@@ -1,35 +1,55 @@
-# CloudToLocalLLM Cloud Portal
+# CloudToLocalLLM Cloud Component
 
-This repository contains the cloud portal for CloudToLocalLLM, built with Flutter/Dart and ready for deployment on Render.com or any Docker-compatible platform.
-
----
-
-## What is the Cloud Portal?
-
-- The cloud portal is the main entry point for users to interact with their local or cloud-based language models.
-- It provides a secure, modern, and easy-to-use web interface for authentication, model management, prompt submission, and settings.
-- The portal is built with Flutter/Dart for a consistent experience across all devices and browsers.
-
----
+This is the cloud component for CloudToLocalLLM, providing a secure web interface and remote access to your local LLMs via Docker.
 
 ## Features
 
-- **Authentication:** Secure login and registration.
-- **Model Management:** Select, add, or remove language models.
-- **Chat Interface:** Send prompts and view responses in a chat format.
-- **Settings:** Adjust appearance, provider, cloud sync, and offline mode.
-- **No coding required:** All setup and deployment steps are non-technical and fully documented.
+- **Secure Tunneling**: Built-in ngrok integration for secure remote access
+- **Web Interface**: Modern UI for interacting with your LLMs
+- **Docker Support**: Easy deployment with Docker and Docker Compose
+- **Health Monitoring**: Automatic health checks and status monitoring
 
----
+## Prerequisites
 
-## How to Deploy
+- Docker and Docker Compose
 
-See [README_CLOUD_DEPLOY.md](./README_CLOUD_DEPLOY.md) for detailed, step-by-step instructions to build, run, and deploy the portal using Docker and Render.com.
+## Quick Start
 
----
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/thrightguy/CloudToLocalLLM_cloud.git
+   cd CloudToLocalLLM_cloud
+   ```
 
-## For Contributors
+2. **Build and Run**
+   ```bash
+   docker compose up -d --build
+   ```
 
-- All code is written in Flutter/Dart. Please follow the existing widget and theme structure for any changes.
-- Use the included Dockerfile for builds and deployments.
-- For questions or help, open an issue or contact the project maintainer.
+3. **Access the Web Interface**
+   - Open your browser and navigate to `http://<your-server-ip>/`
+   - Connect to your local LLM instance
+
+## Configuration
+
+- The web application runs on port **80** by default (see `docker-compose.yml`).
+- You can change the port mapping in `docker-compose.yml` if needed.
+
+## Deployment
+
+- For DigitalOcean or Render.com deployment, see the relevant deployment guides in this repo.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Create a pull request
+
+## License
+
+MIT License - see LICENSE file
+
+## Related Projects
+
+- [CloudToLocalLLM](https://github.com/thrightguy/CloudToLocalLLM) - The main Windows application
