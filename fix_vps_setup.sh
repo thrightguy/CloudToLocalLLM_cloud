@@ -40,9 +40,11 @@ server {
     }
 
     location /cloud/ {
-        proxy_pass http://localhost:80;
+        proxy_pass http://localhost:8080/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 EOF
@@ -72,6 +74,10 @@ docker system prune -af --volumes || true
 echo -e "${YELLOW}Ensuring Docker is running...${NC}"
 systemctl restart docker
 
+# Check what's using port 80
+echo -e "${YELLOW}Checking what's using port 80...${NC}"
+netstat -tulpn | grep :80
+
 # Create cloud-only docker-compose file
 echo -e "${YELLOW}Creating cloud-only Docker configuration...${NC}"
 cat > /tmp/docker-compose.yml << 'EOF'
@@ -81,7 +87,7 @@ services:
   webapp:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./cloud/web:/usr/share/nginx/html
     restart: always
