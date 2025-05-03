@@ -51,6 +51,28 @@ cp -r web/* "$DEPLOY_DIR/"
 cp Dockerfile "$TEMP_DIR/"
 cp docker-compose.yml "$TEMP_DIR/"
 
+# Create nginx site configuration
+cat << 'EOF' > "$TEMP_DIR/cloudtolocalllm.conf"
+server {
+    listen 80;
+    server_name cloudtolocalllm.online www.cloudtolocalllm.online;
+    
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+        autoindex off;
+    }
+
+    location /cloud/ {
+        proxy_pass http://localhost:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+EOF
+
 # Create cleanup script for VPS
 cat << 'EOF' > "$TEMP_DIR/cleanup_vps.sh"
 #!/bin/bash
@@ -79,9 +101,27 @@ apt-get autoremove -y
 echo -e "${YELLOW}Removing temporary files...${NC}"
 rm -rf /tmp/*
 
+# Fix permissions for web folder
+echo -e "${YELLOW}Setting correct permissions for web folder...${NC}"
+chown -R www-data:www-data /var/www/html
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
+
+# Configure Git to allow operations in the web directory
+git config --global --add safe.directory /var/www/html
+
 # Ensure Docker service is properly configured
 echo -e "${YELLOW}Ensuring Docker is configured correctly...${NC}"
 systemctl restart docker
+
+# Update Nginx configuration
+echo -e "${YELLOW}Updating Nginx configuration...${NC}"
+if [ -f /etc/nginx/sites-enabled/default ]; then
+  rm -f /etc/nginx/sites-enabled/default
+fi
+cp /var/www/cloudtolocalllm/cloudtolocalllm.conf /etc/nginx/sites-available/
+ln -sf /etc/nginx/sites-available/cloudtolocalllm.conf /etc/nginx/sites-enabled/
+nginx -t && systemctl restart nginx
 
 echo -e "${GREEN}VPS cleanup complete!${NC}"
 EOF
