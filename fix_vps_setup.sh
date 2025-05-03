@@ -72,18 +72,31 @@ docker system prune -af --volumes || true
 echo -e "${YELLOW}Ensuring Docker is running...${NC}"
 systemctl restart docker
 
+# Create cloud-only docker-compose file
+echo -e "${YELLOW}Creating cloud-only Docker configuration...${NC}"
+cat > /tmp/docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  webapp:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./cloud/web:/usr/share/nginx/html
+    restart: always
+    container_name: cloudtolocalllm-web
+
+networks:
+  default:
+    driver: bridge
+EOF
+
 # Start Docker container for the web application
 echo -e "${YELLOW}Starting Docker container...${NC}"
-if [ -f /var/www/html/docker-compose.yml ]; then
-  cd /var/www/html
-  docker-compose up -d
-elif [ -f /var/www/html/cloud/docker-compose.yml ]; then
-  cd /var/www/html/cloud
-  docker-compose up -d
-else
-  echo -e "${RED}Could not find docker-compose.yml file${NC}"
-  exit 1
-fi
+cp /tmp/docker-compose.yml /var/www/html/
+cd /var/www/html
+docker-compose up -d
 
 echo -e "${GREEN}VPS setup fixed successfully!${NC}"
 echo -e "${YELLOW}Your website should now be accessible at http://cloudtolocalllm.online${NC}"
