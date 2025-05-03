@@ -10,6 +10,31 @@ This guide explains how to deploy the CloudToLocalLLM cloud component with its l
 
 Note: The deployment scripts will automatically install Docker and Docker Compose if they're not already installed.
 
+## Quick Fix for Existing Deployments
+
+If you're experiencing issues with your current VPS deployment, we've created a one-click fix script:
+
+```bash
+# Log in to your VPS
+ssh user@your-vps-ip
+
+# Navigate to the repository root (if not already there)
+cd /var/www/html
+
+# Download and run the fix script
+sudo curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
+sudo chmod +x fix_vps_setup.sh
+sudo ./fix_vps_setup.sh
+```
+
+This script automatically:
+- Fixes Git repository permissions
+- Updates the Nginx configuration
+- Sets correct file permissions
+- Cleans up Docker resources
+- Restarts necessary services
+- Configures everything to work with your domain
+
 ## SSH Key Setup
 
 SSH key authentication is required for deployment. If you don't have an SSH key:
@@ -278,6 +303,18 @@ The `Dockerfile` already uses multi-stage builds to keep the final image small. 
 - **SSL certificate issues**: Verify Certbot setup and renewal
 - **Permission errors**: Ensure proper permissions on files and directories
 - **Port 80 already in use**: Identify and stop any service using port 80 with `sudo lsof -i :80`
+
+### Using the Fix Script
+
+If you're experiencing any combination of these issues, remember that you can use our fix script:
+
+```bash
+sudo curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
+sudo chmod +x fix_vps_setup.sh
+sudo ./fix_vps_setup.sh
+```
+
+The script will automatically diagnose and fix most common deployment issues.
 
 ### Logs
 
