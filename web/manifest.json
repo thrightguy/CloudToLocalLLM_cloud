@@ -1,11 +1,11 @@
 {
-    "name": "cloudtolocalllm_dev",
-    "short_name": "cloudtolocalllm_dev",
+    "name": "CloudToLocalLLM",
+    "short_name": "CloudToLocalLLM",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "CloudToLocalLLM",
+    "background_color": "#3498db",
+    "theme_color": "#3498db",
+    "description": "Access your local LLMs from anywhere - CloudToLocalLLM",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

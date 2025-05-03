@@ -18,21 +18,132 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="CloudToLocalLLM">
+  <meta name="description" content="Access your local LLMs from anywhere - CloudToLocalLLM">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="cloudtolocalllm_dev">
+  <meta name="apple-mobile-web-app-title" content="CloudToLocalLLM">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>cloudtolocalllm_dev</title>
+  <title>CloudToLocalLLM - Access your local AI models from anywhere</title>
   <link rel="manifest" href="manifest.json">
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #3498db;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .highlight {
+      color: #2980b9;
+      font-weight: bold;
+    }
+    .logo {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 1rem;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .feature {
+      flex: 1 1 200px;
+      padding: 1rem;
+      background-color: rgba(240, 240, 240, 0.7);
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-5px);
+    }
+    .coming-soon {
+      background-color: #3498db;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      margin: 2rem 0;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+    }
+    .countdown {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #7f8c8d;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <img src="icons/Icon-192.png" alt="CloudToLocalLLM Logo" class="logo">
+    <h1>CloudToLocal<span class="highlight">LLM</span></h1>
+    
+    <p>Access your powerful local LLMs from anywhere in the world, securely and efficiently.</p>
+    
+    <div class="coming-soon">Coming Soon</div>
+    
+    <p>We're working hard to bring you the best experience for accessing your local AI models remotely. Stay tuned!</p>
+    
+    <div class="features">
+      <div class="feature">
+        <h3>Secure Access</h3>
+        <p>Connect to your local LLMs from anywhere with end-to-end encryption and secure tunneling.</p>
+      </div>
+      <div class="feature">
+        <h3>User-Friendly Interface</h3>
+        <p>Enjoy the same powerful UI and features as the desktop version, accessible from any device.</p>
+      </div>
+      <div class="feature">
+        <h3>Cost Efficiency</h3>
+        <p>No need to pay for cloud AI services - use your own hardware and models.</p>
+      </div>
+    </div>
+    
+    <footer>
+      &copy; 2023-2024 CloudToLocalLLM - All Rights Reserved
+    </footer>
+  </div>
+
+  <!-- Keep Flutter bootstrap for future use -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

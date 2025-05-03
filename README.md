@@ -8,6 +8,7 @@ This is the cloud component for CloudToLocalLLM, providing a secure web interfac
 - **Web Interface**: Modern UI for interacting with your LLMs
 - **Docker Support**: Easy deployment with Docker and Docker Compose
 - **Health Monitoring**: Automatic health checks and status monitoring
+- **Landing Page**: Attractive "coming soon" page for initial deployments
 
 ## Prerequisites
 
@@ -34,6 +35,29 @@ This is the cloud component for CloudToLocalLLM, providing a secure web interfac
 
 - The web application runs on port **80** by default (see `docker-compose.yml`).
 - You can change the port mapping in `docker-compose.yml` if needed.
+
+## VPS Deployment
+
+For deploying to your own VPS:
+
+1. **Using the Deployment Script**
+   ```bash
+   chmod +x deploy_to_vps.sh
+   ./deploy_to_vps.sh YOUR_VPS_IP YOUR_VPS_USER [SSH_PORT]
+   ```
+
+2. **Manual Deployment**
+   See `VPS_DEPLOYMENT.md` for detailed manual deployment instructions.
+
+## Landing Page
+
+The cloud component includes an attractive "coming soon" landing page that:
+- Explains the service features
+- Has a professional and modern design
+- Is responsive for all devices
+- Will be replaced by the full application when it's ready
+
+To customize the landing page, edit the files in the `web/` directory.
 
 ## Deployment
 
