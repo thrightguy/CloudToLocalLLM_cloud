@@ -3,17 +3,14 @@ version: '3.8'
 services:
   webapp:
     build: 
-      context: ./webapp
+      context: .
       dockerfile: Dockerfile
     ports:
-      - "80:3456"
+      - "80:80"
     environment:
       - NODE_ENV=production
-      - PORT=3456
-    restart: unless-stopped
-    volumes:
-      - ./webapp:/usr/src/app
-      - /usr/src/app/node_modules
+    restart: always
+    container_name: cloudtolocalllm-web
 
 networks:
   default:
