@@ -21,10 +21,15 @@ ssh user@your-vps-ip
 # Navigate to the repository root (if not already there)
 cd /var/www/html
 
-# Download and run the fix script
-sudo curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
-sudo chmod +x fix_vps_setup.sh
-sudo ./fix_vps_setup.sh
+# Download and run the fix script (as root user)
+curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
+chmod +x fix_vps_setup.sh
+./fix_vps_setup.sh
+
+# If not logged in as root, use sudo:
+# sudo curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
+# sudo chmod +x fix_vps_setup.sh
+# sudo ./fix_vps_setup.sh
 ```
 
 This script automatically:
@@ -184,43 +189,45 @@ If you prefer to deploy manually, follow these steps:
 2. Install Docker on your VPS (if not already installed):
    ```bash
    # Update package lists
-   sudo apt-get update
+   apt-get update
    
    # Install prerequisites
-   sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+   apt-get install -y apt-transport-https ca-certificates curl software-properties-common
    
    # Add Docker's official GPG key
-   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
    
    # Add Docker repository
-   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
    
    # Install Docker CE
-   sudo apt-get update
-   sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   apt-get update
+   apt-get install -y docker-ce docker-ce-cli containerd.io
    
    # Install Docker Compose
-   sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-   sudo chmod +x /usr/local/bin/docker-compose
+   curl -L "https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   chmod +x /usr/local/bin/docker-compose
    ```
+
+   Note: If not logged in as root, prefix all commands with `sudo`.
 
 3. Clean up the VPS:
    ```bash
    # Stop all running containers
-   sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+   docker stop $(docker ps -q) 2>/dev/null || true
    
    # Remove unused Docker resources
-   sudo docker system prune -af --volumes
+   docker system prune -af --volumes
    
    # Clean apt cache
-   sudo apt-get clean
-   sudo apt-get autoremove -y
+   apt-get clean
+   apt-get autoremove -y
    
    # Remove temporary files
-   sudo rm -rf /tmp/*
+   rm -rf /tmp/*
    
    # Restart Docker
-   sudo systemctl restart docker
+   systemctl restart docker
    ```
 
 4. Transfer files to your VPS (using SSH key authentication):
@@ -240,7 +247,7 @@ If you prefer to deploy manually, follow these steps:
    cd /var/www/cloudtolocalllm
    
    # Start Docker on port 80
-   sudo docker-compose up -d
+   docker-compose up -d
    ```
 
 ## Setting Up a Domain and SSL
@@ -250,13 +257,15 @@ Once deployed, you might want to set up a domain and SSL:
 1. Point your domain to your VPS IP address using DNS records
 2. Install Certbot on your VPS:
    ```bash
-   sudo apt update
-   sudo apt install certbot python3-certbot-nginx
+   apt update
+   apt install certbot python3-certbot-nginx
    ```
 3. Obtain SSL certificate:
    ```bash
-   sudo certbot --nginx -d yourdomain.com
+   certbot --nginx -d yourdomain.com
    ```
+
+Note: If not logged in as root, prefix all commands with `sudo`.
 
 ## Updating the Deployment
 
@@ -266,7 +275,7 @@ To update your deployment after changes:
 2. Run the deployment script again or manually transfer files
 3. Restart the Docker container:
    ```bash
-   ssh -i path/to/your/private_key user@your-vps "cd /var/www/cloudtolocalllm && sudo docker-compose restart"
+   ssh -i path/to/your/private_key user@your-vps "cd /var/www/cloudtolocalllm && docker-compose restart"
    ```
 
 ## Removing Unnecessary Packages
@@ -299,16 +308,22 @@ The `Dockerfile` already uses multi-stage builds to keep the final image small. 
 
 - **SSH key authentication fails**: Make sure your public key is properly added to the server's `~/.ssh/authorized_keys` file
 - **Docker installation fails**: Try installing Docker manually following the [official Docker documentation](https://docs.docker.com/engine/install/)
-- **Web page not loading**: Check if Docker is running with `docker ps` and verify it's using port 80 with `sudo netstat -tulpn | grep 80`
+- **Web page not loading**: Check if Docker is running with `docker ps` and verify it's using port 80 with `netstat -tulpn | grep 80`
 - **SSL certificate issues**: Verify Certbot setup and renewal
 - **Permission errors**: Ensure proper permissions on files and directories
-- **Port 80 already in use**: Identify and stop any service using port 80 with `sudo lsof -i :80`
+- **Port 80 already in use**: Identify and stop any service using port 80 with `lsof -i :80`
 
 ### Using the Fix Script
 
 If you're experiencing any combination of these issues, remember that you can use our fix script:
 
 ```bash
+# If logged in as root:
+curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
+chmod +x fix_vps_setup.sh
+./fix_vps_setup.sh
+
+# If not logged in as root:
 sudo curl -o fix_vps_setup.sh https://raw.githubusercontent.com/thrightguy/CloudToLocalLLM_cloud/main/fix_vps_setup.sh
 sudo chmod +x fix_vps_setup.sh
 sudo ./fix_vps_setup.sh
@@ -320,7 +335,7 @@ The script will automatically diagnose and fix most common deployment issues.
 
 To check logs:
 ```bash
-ssh -i path/to/your/private_key user@your-vps "cd /var/www/cloudtolocalllm && sudo docker-compose logs"
+ssh -i path/to/your/private_key user@your-vps "cd /var/www/cloudtolocalllm && docker-compose logs"
 ```
 
 ## Support

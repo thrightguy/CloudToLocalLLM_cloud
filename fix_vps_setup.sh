@@ -87,4 +87,4 @@ fi
 
 echo -e "${GREEN}VPS setup fixed successfully!${NC}"
 echo -e "${YELLOW}Your website should now be accessible at http://cloudtolocalllm.online${NC}"
-echo -e "If SSL is needed, run: sudo certbot --nginx -d cloudtolocalllm.online -d www.cloudtolocalllm.online" 
+echo -e "If SSL is needed, run: certbot --nginx -d cloudtolocalllm.online -d www.cloudtolocalllm.online" 
