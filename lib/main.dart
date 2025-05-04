@@ -1,8 +1,6 @@
 ﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config/app_config.dart';
 import 'config/theme.dart';
@@ -32,13 +30,17 @@ void main() async {
   // Get the saved settings to determine the LLM provider
   final prefs = await SharedPreferences.getInstance();
   final settingsJson = prefs.getString(AppConfig.settingsStorageKey);
-  final settings = settingsJson != null ? Map<String, dynamic>.from(jsonDecode(settingsJson)) : <String, dynamic>{};
-  final llmProvider = settings['llmProvider'] as String? ?? AppConfig.defaultLlmProvider;
+  final settings = settingsJson != null
+      ? Map<String, dynamic>.from(jsonDecode(settingsJson))
+      : <String, dynamic>{};
+  final llmProvider =
+      settings['llmProvider'] as String? ?? AppConfig.defaultLlmProvider;
 
   // Initialize OllamaService with the appropriate base URL based on the provider
   final ollamaService = OllamaService(
-    baseUrl: llmProvider == 'lmstudio' ? AppConfig.lmStudioBaseUrl : AppConfig.ollamaBaseUrl
-  );
+      baseUrl: llmProvider == 'lmstudio'
+          ? AppConfig.lmStudioBaseUrl
+          : AppConfig.ollamaBaseUrl);
 
   // Run the app
   runApp(
@@ -105,20 +107,19 @@ class _CloudToLocalLlmAppState extends State<CloudToLocalLlmApp> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize providers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeProviders();
     });
   }
 
   Future<void> _initializeProviders() async {
-    // Initialize auth provider
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!mounted) return;
     await authProvider.initialize();
 
-    // Initialize settings provider
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    if (!mounted) return;
     await settingsProvider.initialize();
   }
 

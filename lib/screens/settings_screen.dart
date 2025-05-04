@@ -12,11 +12,29 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _ollamaIpController = TextEditingController();
+  final _lmStudioIpController = TextEditingController();
+  final _customLlmIpController = TextEditingController();
+  final _ngrokTokenController = TextEditingController();
+  final _ngrokSubdomainController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    _ollamaIpController.text = settingsProvider.ollamaIpAddress ?? '';
+    _lmStudioIpController.text = settingsProvider.lmStudioIpAddress ?? '';
+    _customLlmIpController.text = settingsProvider.customLlmIpAddress ?? '';
+    _ngrokTokenController.text = settingsProvider.ngrokAuthToken ?? '';
+    _ngrokSubdomainController.text = settingsProvider.ngrokSubdomain ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -31,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildThemeSelector(settingsProvider),
             ],
           ),
-          
+
           // LLM settings
           _buildSection(
             title: 'LLM Settings',
@@ -55,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          
+
           // Cloud settings
           _buildSection(
             title: 'Cloud Settings',
@@ -106,7 +124,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         ),
-                        if (settingsProvider.isTunnelConnected && settingsProvider.tunnelUrl.isNotEmpty) ...[
+                        if (settingsProvider.isTunnelConnected &&
+                            settingsProvider.tunnelUrl.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           const Text(
                             'Your LLM is accessible at:',
@@ -127,11 +146,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            final result = await settingsProvider.checkTunnelStatus();
-                            if (!result && mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                            // Store context before async gap
+                            BuildContext currentContext = context;
+                            final result =
+                                await settingsProvider.checkTunnelStatus();
+                            // Check if widget is still mounted before using context
+                            if (!result && mounted && currentContext.mounted) {
+                              ScaffoldMessenger.of(currentContext).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Failed to connect to tunnel. Make sure you are logged in.'),
+                                  content: Text(
+                                      'Failed to connect to tunnel. Make sure you are logged in.'),
                                 ),
                               );
                             }
@@ -145,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ],
           ),
-          
+
           // Account settings
           _buildSection(
             title: 'Account',
@@ -165,7 +189,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     } else {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
                       );
                     }
                   },
@@ -176,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          
+
           // About section
           _buildSection(
             title: 'About',
@@ -208,7 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          
+
           // Reset settings button
           const SizedBox(height: 16),
           ElevatedButton.icon(
@@ -224,9 +249,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-  
+
   // Build a section with a title and children
-  Widget _buildSection({required String title, required List<Widget> children}) {
+  Widget _buildSection(
+      {required String title, required List<Widget> children}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -249,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ],
     );
   }
-  
+
   // Build a switch tile
   Widget _buildSwitchTile({
     required String title,
@@ -264,7 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onChanged: onChanged,
     );
   }
-  
+
   // Build theme selector
   Widget _buildThemeSelector(SettingsProvider settingsProvider) {
     return ListTile(
@@ -294,7 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-  
+
   // Build LLM provider selector
   Widget _buildLlmProviderSelector(SettingsProvider settingsProvider) {
     return ListTile(
@@ -320,7 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-  
+
   // Show logout confirmation dialog
   void _showLogoutDialog() {
     showDialog(
@@ -344,14 +370,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-  
+
   // Show reset settings confirmation dialog
   void _showResetSettingsDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset Settings'),
-        content: const Text('Are you sure you want to reset all settings to default values?'),
+        content: const Text(
+            'Are you sure you want to reset all settings to default values?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -360,7 +387,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Provider.of<SettingsProvider>(context, listen: false).resetSettings();
+              Provider.of<SettingsProvider>(context, listen: false)
+                  .resetToDefaults();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Settings reset to defaults')),
               );

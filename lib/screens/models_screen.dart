@@ -120,8 +120,11 @@ class _ModelsScreenState extends State<ModelsScreen> {
   ) {
     // Group models by provider
     final ollamaModels = models.where((m) => m.provider == 'ollama').toList();
-    final lmStudioModels = models.where((m) => m.provider == 'lmstudio').toList();
-    final otherModels = models.where((m) => m.provider != 'ollama' && m.provider != 'lmstudio').toList();
+    final lmStudioModels =
+        models.where((m) => m.provider == 'lmstudio').toList();
+    final otherModels = models
+        .where((m) => m.provider != 'ollama' && m.provider != 'lmstudio')
+        .toList();
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -145,7 +148,8 @@ class _ModelsScreenState extends State<ModelsScreen> {
                   value: settingsProvider.llmProvider,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   items: const [
                     DropdownMenuItem(
@@ -277,7 +281,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
                     icon: const Icon(Icons.download),
                     label: const Text('Download'),
                   ),
-                
+
                 // Progress indicator
                 if (model.isDownloading && model.downloadProgress != null)
                   Expanded(
@@ -295,15 +299,16 @@ class _ModelsScreenState extends State<ModelsScreen> {
                       ],
                     ),
                   ),
-                
+
                 // Delete button
                 if (model.isInstalled && !model.isDownloading)
                   TextButton.icon(
-                    onPressed: () => _deleteModel(model.id, model.name),
+                    onPressed: () => _deleteModel(context, model),
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    label: const Text('Delete', style: TextStyle(color: Colors.red)),
+                    label: const Text('Delete',
+                        style: TextStyle(color: Colors.red)),
                   ),
-                
+
                 // Use button
                 if (model.isInstalled && !model.isDownloading)
                   const SizedBox(width: 8),
@@ -325,7 +330,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
     } else if (difference.inHours > 0) {
@@ -340,7 +345,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
   // Download model
   Future<void> _downloadModel(String modelId) async {
     final llmProvider = Provider.of<LlmProvider>(context, listen: false);
-    
+
     try {
       await llmProvider.pullModel(
         modelId,
@@ -358,36 +363,44 @@ class _ModelsScreenState extends State<ModelsScreen> {
   }
 
   // Delete model
-  Future<void> _deleteModel(String modelId, String modelName) async {
-    final confirmed = await showDialog<bool>(
+  void _deleteModel(BuildContext context, LlmModel model) async {
+    final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Model'),
-        content: Text('Are you sure you want to delete $modelName?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Model?'),
+          content: Text(
+              'Are you sure you want to delete the model "${model.name}"?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+            ),
+          ],
+        );
+      },
     );
-    
-    if (confirmed == true) {
+
+    if (confirm == true) {
       final llmProvider = Provider.of<LlmProvider>(context, listen: false);
-      
+      BuildContext currentContext = context; // Store context before async gap
       try {
-        await llmProvider.deleteModel(modelId);
+        await llmProvider.deleteModel(model.id);
+        // Check mounted before showing SnackBar
+        if (!currentContext.mounted) return; // Use stored context
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          SnackBar(content: Text('Model "${model.name}" deleted.')),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting model: $e')),
-          );
-        }
+        // Check mounted before showing SnackBar
+        if (!currentContext.mounted) return; // Use stored context
+        ScaffoldMessenger.of(currentContext).showSnackBar(
+          SnackBar(content: Text('Error deleting model: $e')),
+        );
       }
     }
   }
@@ -395,10 +408,10 @@ class _ModelsScreenState extends State<ModelsScreen> {
   // Use model
   void _useModel(String modelId) {
     final llmProvider = Provider.of<LlmProvider>(context, listen: false);
-    
+
     // Create a new conversation with this model
     llmProvider.createConversation('New Conversation', modelId);
-    
+
     // Navigate back to home screen
     Navigator.pop(context);
   }
@@ -406,7 +419,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
   // Show dialog to add a new model
   Future<void> _showAddModelDialog(BuildContext context) async {
     _modelNameController.clear();
-    
+
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
