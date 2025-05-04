@@ -3,9 +3,9 @@
     "short_name": "CloudToLocalLLM",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#3498db",
-    "theme_color": "#3498db",
-    "description": "Access your local LLMs from anywhere - CloudToLocalLLM",
+    "background_color": "#4169e1",
+    "theme_color": "#4169e1",
+    "description": "Run powerful Large Language Models locally with cloud-based management",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
